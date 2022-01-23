@@ -1,0 +1,22 @@
+{
+  "name": "used_books",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StarFace90/used_book_price_site-BE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StarFace90/used_book_price_site-BE/issues"
+  },
+  "homepage": "https://github.com/StarFace90/used_book_price_site-BE#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
