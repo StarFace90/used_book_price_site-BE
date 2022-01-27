@@ -1,6 +1,13 @@
 const scrap = require('puppeteer');
+const toUnicode = require('./decode');
 
-var keyword = 'harry potter';
+//let keyword = 'harry potter';
+
+// decode.js에서 가져온 charToUnicode 함수 사용
+// ? 지금은 문자를 직접 넣었지만, 추후 프런트에서 보낼 데이터를 받아 사용
+let keyword = toUnicode.charToUnicode('해리 포터');
+// 띄어쓰기에도 결과 잘 나옴
+
 
 // app.js로 보내기 위한 모듈화
 module.exports =
@@ -8,7 +15,7 @@ module.exports =
         const browser = await scrap.launch(); // headless 브라우저 실행
         const page = await browser.newPage(); // 새로운 페이지 열기 -> yes24 중고 매입 페이지
 
-        // 직접 특정 값을 줘서 데이터 잘 오는지 확인 (여기서는 검색어 베르나르 베르베르)
+        // 직접 특정 값을 줘서 데이터 잘 오는지 확인 (여기서는 검색어 해리포터)
         //! 문제 실제 사이트에서 한글로 검색시 한글 키워드가 디코딩됨 해결책 모색!
         //await page.goto(`http://www.yes24.com/Mall/buyback/Search?CategoryNumber=018&SearchWord=%uBCA0%uB974%uB098%uB974%20%uBCA0%uB974%uBCA0%uB974&SearchDomain=BOOK,FOREIGN&BuybackAccept=N`)
 
