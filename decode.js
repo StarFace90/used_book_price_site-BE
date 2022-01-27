@@ -3,9 +3,6 @@
 // SearchWord=harry%20potter&
 
 
-
-
-
 // isbn13 일 경우
 // SearchWord=9788983928207&
 
@@ -61,7 +58,7 @@ for (let key in splstr) {
 }
 
 
-//let vv = "해리포터".split("").reduce((hex, c) => hex += c.charCodeAt(0).toString(16).padStart(4, "0"), "")
+
 
 let vv = '해리포터'.charCodeAt(0).toString(16);
 
@@ -69,20 +66,26 @@ console.log(vv);
 
 // let texted = '%uD574%uB9AC%20%uD3EC%uD130';
 
+
 // let text = decodeURI(texted);
 
 // console.log(text);
 
 
-charToUnicode = function (str) {
-    if (!str) return false; // Escaping if not exist
-    var unicode = '';
-    for (var i = 0, l = str.length; i < l; i++) {
-        unicode += '\\u' + str[i].charCodeAt(0).toString(16);
+let charToUnicode = function (str) {
+    if (!str) return false; // 문자(검색어 입력) 없을 시 false -> 종료
+    let unicode = '';
+    for (let i = 0; i < str.length; i++) {
+        let transUpper = str[i].charCodeAt(0).toString(16);
+        console.log("변환전", transUpper);
+        // 문자에 띄어쓰기가 있을 경우 %20으로 변환되기 때문에 삼항조건연산자를 사용하여 조건을 주었다.
+        transUpper !== '20'
+            ? unicode += '%u' + transUpper.toUpperCase()  // '%u'를 변환된 유니코드 문자 앞에 삽입하고 뒤의 문자를 대문자로 변환하여 실제 yes24 한글 검색시 변환 되는 주소와 같게 한다. 
+            : unicode += '%' + transUpper.toUpperCase();
     };
     return unicode;
 }
 
-let result = charToUnicode('해리포터')
+let result = charToUnicode('해리 포터')
 
-console.log(result)
+console.log(result) 
