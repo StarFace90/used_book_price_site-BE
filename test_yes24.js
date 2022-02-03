@@ -1,3 +1,4 @@
+const fs = require('fs');
 const scrap = require('puppeteer');
 const toUnicode = require('./decode');
 
@@ -58,7 +59,7 @@ module.exports =
 
                     // author 배열형태 [0]부터 순서대로 저자, 출판사, 출판년월
                     author: yes24Data[i].querySelector('p.bbG_pubGrp').innerText.split('|'),
-                    isbn: yes24Data[i].querySelector('p.bbG_isbn').innerText.split(' | '),
+                    isbn: yes24Data[i].querySelector('p.bbG_isbn').innerText.split('|'),
 
                     priceText: priceText,
                     price: price,
@@ -72,7 +73,7 @@ module.exports =
         })
         // console.log('priceText', priceText);
         //console.log('price', price);
-        console.log("결과값", usedBooks);
+        //console.log("결과값", usedBooks);
 
         //! 아래와 같이 데이터를 담아온다.
         /**
@@ -92,8 +93,48 @@ module.exports =
         //     price: [ '9,500원', '2,900원', '2,600원', '2,300원' ]
         //   },
 
+        // ? api 요청시 
 
 
+        // 크롤링한 데이터와 api 요청 데이터 통합 전에 file system 모듈로 json 파일 생성 후 저장 테스트 
+        // 성공시 json파일을 이용하여 db에 저장하는 방법도 모색 또는 프런트 요청에 의한 쿼리로 db에 저장하는 방법 모색
+
+
+
+
+        // 파일 이름이 같으면 덮어씌워지므로 년/월/일/시간/분/초 로 한다 
+
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = ('0' + (today.getMonth() + 1)).slice(-2);
+        let day = ('0' + today.getDate()).slice(-2);
+        let hours = ('0' + today.getHours()).slice(-2);
+        let minutes = ('0' + today.getMinutes()).slice(-2);
+        let seconds = ('0' + today.getSeconds()).slice(-2);
+
+
+
+
+        let fileName = year + '-' + month + '-' + day + '-' + hours + minutes + seconds;
+        console.log(fileName);
+
+
+        // usedBooks로 데이터 크롤링 한 것을 저장한다
+        fs.writeFile(`./Docs/yes24Data-${fileName}.json`,
+            JSON.stringify(usedBooks, null, 2), 'utf-8',
+            err =>
+                err ? console.error('파일 생성에 실패했습니다', err)
+                    : console.log('파일 생성에 성공했습니다!')
+        );
+
+
+        // 파일 생성된 내용 보여주는 콘솔
+        let writefileContents = JSON.parse(JSON.stringify(usedBooks));
+        console.log(writefileContents);
+
+
+
+        // 브라우저 닫기 
         await browser.close();
 
 
