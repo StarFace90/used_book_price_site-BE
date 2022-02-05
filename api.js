@@ -1,5 +1,7 @@
 const request = require('request');
 const config = require('./config');
+const fs = require('fs');
+const file = require('./method');
 
 //? 오래간만에 코딩이므로 나중에 재 공부 및 코드리뷰 해보면서 로직 수정예정..
 
@@ -161,14 +163,33 @@ function lookUpApi(lookUpQuery) {
 
             listApiData.push(lookUphandleData);
         }
-        console.log(listApiData);
+        //console.log(listApiData);
 
-        for (let key in listApiData) {
-            console.log("isbn13: ", listApiData[key].isbn13) // maxResults에 맞게 잘 나온다 
-        }
+
+        // for (let key in listApiData) {
+        //     // console.log("isbn13: ", listApiData[key].isbn13) // maxResults에 맞게 잘 나온다 
+        // }
         // ? 무언가 이상해서 보는데 실제 알라딘 페이지의 검색결과와 api의 검색결과 순서가 다르다(기준은 모르겠다.)
 
+
+
+        const fileName = file.fileNameLive();
+
+        //usedBooks로 데이터 크롤링 한 것을 저장한다
+        fs.writeFile(`./Docs/aladinApi-${fileName}.json`,
+            JSON.stringify(listApiData, null, 2), 'utf-8',
+            err =>
+                err ? console.error('파일 생성에 실패했습니다', err)
+                    : console.log('파일 생성에 성공했습니다!')
+        );
+
+
+        // 파일 생성된 내용 보여주는 콘솔
+        let writefileContents = JSON.parse(JSON.stringify(listApiData));
+        console.log(writefileContents);
+
     })
+
 }
 
 
@@ -178,78 +199,3 @@ function lookUpApi(lookUpQuery) {
 
 
 
-
-
-
-
-
-
-
-
-// const options2 = {
-//     uri: `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?`,
-//     qs: {
-//         ttbkey: ttbkey,
-//         itemId: '',
-//         itemIdType: 'ISBN13',
-//         //itemIdType: 'itemId',
-//         output: 'js',
-//         version: '20131101',
-//         optResult: 'c2binfo'
-//     }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // 상품 조회 api 응답
-// request(options2, function (err, res, body) {
-//     try {
-//         let data = JSON.parse(body);
-//         //console.log("여기", data)
-//         let aladin = data.item;
-//         for (let i = 0; i < aladin.length; i++) {
-//             var aladinData = aladin[i];
-//             var getData = {
-//                 id: i,
-//                 link: aladinData.link,
-//                 link: aladinData.cover,
-//                 title: aladinData.title,
-//                 pubDate: aladinData.pubDate,
-//                 author: aladinData.author,
-//                 isbn: aladinData.isbn,
-//                 isbn13: aladinData.isbn13,
-//                 subInfo: aladinData.subInfo.c2bsales_price
-//             }
-
-//         }
-//         //console.log("body", data)
-//         // console.log("상품조회 api subInfo", getData.subInfo);
-//         console.log("상품조회", getData)
-
-//         console.log('statusCode:', res && res.statusCode); // res가 확인되면 상태코드를 출력한다
-//         //console.log('통과')
-//     } catch (error) {
-//         console.error("에러발생:", err)
-//     }
-
-// });
-
-
-
-
-
-//console.log(getData)
