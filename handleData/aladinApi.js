@@ -1,5 +1,5 @@
 const request = require('request');
-const config = require('./config');
+const config = require('../config/config');
 const fs = require('fs');
 const file = require('./method');
 
@@ -176,7 +176,7 @@ function lookUpApi(lookUpQuery) {
         const fileName = file.fileNameLive();
 
         //usedBooks로 데이터 크롤링 한 것을 저장한다
-        fs.writeFile(`./Docs/aladinApi-${fileName}.json`,
+        fs.writeFile(`../Docs/aladinApi-${fileName}.json`,
             JSON.stringify(listApiData, null, 2), 'utf-8',
             err =>
                 err ? console.error('파일 생성에 실패했습니다', err)

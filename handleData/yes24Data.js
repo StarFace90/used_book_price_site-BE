@@ -120,7 +120,7 @@ module.exports =
 
 
         // usedBooks로 데이터 크롤링 한 것을 저장한다
-        fs.writeFile(`./Docs/yes24Data-${fileName}.json`,
+        fs.writeFile(`../Docs/yes24Data-${fileName}.json`,
             JSON.stringify(usedBooks, null, 2), 'utf-8',
             err =>
                 err ? console.error('파일 생성에 실패했습니다', err)
