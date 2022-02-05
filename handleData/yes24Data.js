@@ -1,6 +1,7 @@
 const fs = require('fs');
 const scrap = require('puppeteer');
 const toUnicode = require('./decode');
+const file = require('./method');
 
 //let keyword = 'harry potter';
 
@@ -101,26 +102,13 @@ module.exports =
 
 
 
+        // 파일명 모듈
+        const fileName = file.fileNameLive();
 
-        // 파일 이름이 같으면 덮어씌워지므로 년/월/일/시간/분/초 로 한다 
-
-        let today = new Date();
-        let year = today.getFullYear();
-        let month = ('0' + (today.getMonth() + 1)).slice(-2);
-        let day = ('0' + today.getDate()).slice(-2);
-        let hours = ('0' + today.getHours()).slice(-2);
-        let minutes = ('0' + today.getMinutes()).slice(-2);
-        let seconds = ('0' + today.getSeconds()).slice(-2);
-
-
-
-
-        let fileName = year + '-' + month + '-' + day + '-' + hours + minutes + seconds;
-        console.log(fileName);
 
 
         // usedBooks로 데이터 크롤링 한 것을 저장한다
-        fs.writeFile(`../Docs/yes24Data-${fileName}.json`,
+        fs.writeFile(`Docs/yes24Data-${fileName}.json`,
             JSON.stringify(usedBooks, null, 2), 'utf-8',
             err =>
                 err ? console.error('파일 생성에 실패했습니다', err)

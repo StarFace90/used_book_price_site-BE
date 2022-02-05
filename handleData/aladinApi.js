@@ -2,6 +2,10 @@ const request = require('request');
 const config = require('../config/config');
 const fs = require('fs');
 const file = require('./method');
+// const path = require('path');
+
+// console.log(path.isAbsolute("../Docs/aladinApi-2022-02-06-060520.json"));
+// console.log(path.relative('/handleData/', '/Docs/aladinApi-2022-02-06-060520.json'))
 
 //? 오래간만에 코딩이므로 나중에 재 공부 및 코드리뷰 해보면서 로직 수정예정..
 
@@ -172,11 +176,15 @@ function lookUpApi(lookUpQuery) {
         // ? 무언가 이상해서 보는데 실제 알라딘 페이지의 검색결과와 api의 검색결과 순서가 다르다(기준은 모르겠다.)
 
 
-
+        // 파일명 모듈
         const fileName = file.fileNameLive();
 
-        //usedBooks로 데이터 크롤링 한 것을 저장한다
-        fs.writeFile(`../Docs/aladinApi-${fileName}.json`,
+
+        //기존 경로에서 handleData폴더로 이동시 절대경로는 되고 상대경로 적용 안된 것 해결 (부모폴더 아닌 동등한 폴더로 바로 폴더명/이름 해결)
+        // 참고 링크 https://okky.kr/article/756784
+
+        //  api 데이터를 json파일로 저장한다
+        fs.writeFile(`Docs/aladinApi-${fileName}.json`,
             JSON.stringify(listApiData, null, 2), 'utf-8',
             err =>
                 err ? console.error('파일 생성에 실패했습니다', err)
@@ -186,7 +194,7 @@ function lookUpApi(lookUpQuery) {
 
         // 파일 생성된 내용 보여주는 콘솔
         let writefileContents = JSON.parse(JSON.stringify(listApiData));
-        console.log(writefileContents);
+        //console.log(writefileContents);
 
     })
 
