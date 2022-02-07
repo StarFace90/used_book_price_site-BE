@@ -126,22 +126,23 @@ function lookUpApi(lookUpQuery) {
             var newArr = arr;
         }
 
+
         let status = '';
         let lookUphandleData = ''; // 최종적으로 가공할 조회 api 데이터 변수
         for (let j = 0; j < newArr.length; j++) {
             //  console.log(newArr[j].subInfo.c2bsales);
             //0(매입불가) or 1(매입가능)
 
-
             // 중고 매입 정보가 없을 경우 getData2 객체에 임의의 값 '중고 매입 불가' 를 추가 한다
             if (newArr[j].subInfo.c2bsales === 0) {
                 status = { usedStatus: '중고매입 불가' }
 
 
+                // yes24데이터와 싱크를 위해 이름 변경한다
                 lookUphandleData = {
                     id: j,
                     link: newArr[j].link,
-                    cover: newArr[j].cover,
+                    img: newArr[j].cover,
                     title: newArr[j].title,
                     pubDate: newArr[j].pubDate,
                     author: newArr[j].author,
@@ -161,13 +162,18 @@ function lookUpApi(lookUpQuery) {
                     isbn: newArr[j].isbn,
                     isbn13: newArr[j].isbn13,
                     subInfo: newArr[j].subInfo.c2bsales_price,
+                    //priceText: priceText,
+                    //price: price,
 
                 }
             }
 
             listApiData.push(lookUphandleData);
         }
-        //console.log(listApiData);
+        //console.log("list", listApiData);
+
+        let handleApi = file.handleAladinData(listApiData);
+        console.log("변환", handleApi);
 
 
         // for (let key in listApiData) {
@@ -185,7 +191,7 @@ function lookUpApi(lookUpQuery) {
 
         //  api 데이터를 json파일로 저장한다
         fs.writeFile(`Docs/aladinApi-${fileName}.json`,
-            JSON.stringify(listApiData, null, 2), 'utf-8',
+            JSON.stringify(handleApi, null, 2), 'utf-8',
             err =>
                 err ? console.error('파일 생성에 실패했습니다', err)
                     : console.log('파일 생성에 성공했습니다!')
