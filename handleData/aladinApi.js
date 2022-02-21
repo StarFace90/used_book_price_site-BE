@@ -1,17 +1,21 @@
+const express = require('express');
 const request = require('request');
 const config = require('../config/config');
 const fs = require('fs');
 const file = require('./method');
-// const path = require('path');
+const path = require('path');
+
+
+
 
 // console.log(path.isAbsolute("../Docs/aladinApi-2022-02-06-060520.json"));
 // console.log(path.relative('/handleData/', '/Docs/aladinApi-2022-02-06-060520.json'))
 
-//? 오래간만에 코딩이므로 나중에 재 공부 및 코드리뷰 해보면서 로직 수정예정..
+// ? 오래간만에 코딩이므로 나중에 재 공부 및 코드리뷰 해보면서 로직 수정예정..
 
-// 전역변수들 설정
-let query = "자바 스크립트"; // 임의의 검색쿼리 -> 추후에는 프런트 검색어 받아서
-let ttbkey = config.api_Key; // 알라딘에서 발급 받은 api키 
+var str111 = { query: '애플' };
+let ttbkey = config.api_Key;
+//appAl.getAladin(str111);
 let isbnData = ''; // 검색 api의 결과로 나온 isbn, isbn13을 담을 변수
 let listApiData = []; // 조회 api 데이터 변수
 let options2 = ''; // 조회 api 요청 쿼리 변수
@@ -19,45 +23,80 @@ let arr = [];  // lookUpApi 함수에서 요청된 데이터를 받을 빈 배�
 let maxResults = '11'; // 최대 검색량 설정 -> 추후에 페이지네이션 생각할 것...
 
 
+
+// 전역변수들 설정
+//var query = str111 // 임의의 검색쿼리 -> 추후에는 프런트 검색어 받아서
+
+
+
 //? 상품 검색 api의 경우 원하는 중고 서적 관련 데이터는 나오지 않지만 대부분의 데이터와 많은 검색결과를 가져온다
 //? 상품 조회 api의 경우에는 원하는 중고서적 관련 데이터가 나오지만 1검색 1결과 이므로 한번의 요청으로는 부족하다
 //! 그렇기 떄문에 위 두 api 요청시 상품 검색 api 결과의 isbn부분을 따로 상품 조회 api 쿼리에 넣어 다중 요청을 하는 방법으로 전환
 
 
-// 상품 검색 api 쿼리 options 객체변수
-const options = {
-    url: `http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?`,
-    qs: {
-        ttbkey: ttbkey,
-        query: query,
-        queryType: 'Title',
-        maxResults: maxResults,
-        start: '1',
-        output: 'js',
-        optResult: 'usedList', // 중고책 정보 필요
-        version: '20131101'
-    }
-};
+
+//? 클라이언트 부분에서 res.body 부분 넘어오는 과정에서 module.exports로 app.js에서 aladinApi.js 파일로 query를 보낼 계획
+
+
+function getQueryFromClient(obj) {
+    let dataQuery = obj.query
+    console.log(dataQuery);
+
+    // 알라딘에서 발급 받은 api키 
+    console.log(ttbkey);
+
+
+
+    // 상품 검색 api 쿼리 options 객체변수
+    const options = {
+        url: `http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?`,
+        qs: {
+            ttbkey: ttbkey,
+            query: dataQuery,
+            queryType: 'Title',
+            maxResults: maxResults,
+            start: '1',
+            output: 'js',
+            optResult: 'usedList', // 중고책 정보 필요
+            version: '20131101'
+        }
+    };
+    console.log(options);
+
+    testOption(options);
+}
+
+
+
+
+
+
 
 //? 데이터 가공 결과 중복되면 검색 api 삭제 예정 : 검색 api 응답 값으로 중고 매입가격은 없으므로
 //? 추가 : 상품 조회 api의 경우 isbn 및 알라딘 고유 id로 검색 해야하므로 다이렉트로 요청시 응답 값이 1개만 나온다.
 //? 그러므로 상품검색 api 응답 값에서 isbn값을 따로 빼서 -> 상품 조회 api로 요청한다음 중고 매입가만 따로 빼는 방식으로 시도한다
 //! 16-18번째 주석에서 문제제기 일시적? 해결완료
 
-
 // 상품 검색 api의 request 요청
 
-request(options,
-    function (err, res, body) {
-        //! local function
-        //console.log('res', res)
 
-        let data = JSON.parse(body);
-        // console.log(data)
-        let aladin = data.item;
 
-        handleIsbn(aladin)
-    });
+function testOption(options) {
+    request(options,
+        function (err, res, body) {
+            //! local function
+            //console.log('res', res)
+
+            let data = JSON.parse(body);
+            // console.log(data)
+            let aladin = data.item;
+
+            handleIsbn(aladin)
+        });
+}
+
+
+
 
 
 // 다수의 isbn데이터를 상품조회 api쿼리에 요청하기 위한 함수
@@ -206,10 +245,6 @@ function lookUpApi(lookUpQuery) {
 
 }
 
-
-
-
-
-
-
-
+module.exports = {
+    getQueryFromClient
+}
