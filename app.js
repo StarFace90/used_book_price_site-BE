@@ -15,10 +15,16 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/'));
 
 
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+};
 
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(morgan('dev'))
+
+
 
 
 
@@ -67,8 +73,9 @@ app.use('/yes24', (req, res) => {
 
     getQueryFromClient(query);
 
+
     // 프런트 보내는지 확인을 위해 임의의 파일
-    fs.readFile(`./Docs/test.json`, (err, data) => {
+    fs.readFile(`Docs/aladinApi.json`, (err, data) => {
         if (err) throw err;
         data = JSON.parse(data);
         res.send(data);
