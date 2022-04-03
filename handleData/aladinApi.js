@@ -4,15 +4,13 @@ const fs = require('fs');
 const file = require('./method');
 
 
-
-
 // console.log(path.isAbsolute("../Docs/aladinApi-2022-02-06-060520.json"));
 // console.log(path.relative('/handleData/', '/Docs/aladinApi-2022-02-06-060520.json'))
 
 // ? 오래간만에 코딩이므로 나중에 재 공부 및 코드리뷰 해보면서 로직 수정예정..
 
 
-let ttbkey = config.api_Key;
+let ttbkey = config.api_Key; // api key
 let isbnData = ''; // 검색 api의 결과로 나온 isbn, isbn13을 담을 변수
 let listApiData = []; // 조회 api 데이터 변수
 let options2 = ''; // 조회 api 요청 쿼리 변수
@@ -25,7 +23,6 @@ let maxResults = '20'; // 최대 검색량 설정 -> 추후에 페이지네이�
 //var query = str111 // 임의의 검색쿼리 -> 추후에는 프런트 검색어 받아서
 
 
-
 //? 상품 검색 api의 경우 원하는 중고 서적 관련 데이터는 나오지 않지만 대부분의 데이터와 많은 검색결과를 가져온다
 //? 상품 조회 api의 경우에는 원하는 중고서적 관련 데이터가 나오지만 1검색 1결과 이므로 한번의 요청으로는 부족하다
 //! 그렇기 떄문에 위 두 api 요청시 상품 검색 api 결과의 isbn부분을 따로 상품 조회 api 쿼리에 넣어 다중 요청을 하는 방법으로 전환
@@ -34,14 +31,11 @@ let maxResults = '20'; // 최대 검색량 설정 -> 추후에 페이지네이�
 
 //? 클라이언트 부분에서 res.body 부분 넘어오는 과정에서 module.exports로 app.js에서 aladinApi.js 파일로 query를 보낼 계획
 
-
-function getQueryFromClient(obj) {
-    let dataQuery = obj.query
-
+function getQueryFromClientToAladin(obj) {
+    let dataQuery = obj;
+    console.log(dataQuery);
     // 알라딘에서 발급 받은 api키 
     // console.log(ttbkey);
-
-
 
     // 상품 검색 api 쿼리 options 객체변수
     const options = {
@@ -63,23 +57,18 @@ function getQueryFromClient(obj) {
 }
 
 
-
-
-
-
-
 //? 데이터 가공 결과 중복되면 검색 api 삭제 예정 : 검색 api 응답 값으로 중고 매입가격은 없으므로
 //? 추가 : 상품 조회 api의 경우 isbn 및 알라딘 고유 id로 검색 해야하므로 다이렉트로 요청시 응답 값이 1개만 나온다.
 //? 그러므로 상품검색 api 응답 값에서 isbn값을 따로 빼서 -> 상품 조회 api로 요청한다음 중고 매입가만 따로 빼는 방식으로 시도한다
 //! 16-18번째 주석에서 문제제기 일시적? 해결완료
 
+
 // 상품 검색 api의 request 요청
-
-
-
 function testOption(options) {
     request(options,
         function (err, res, body) {
+
+            //console.log("dsd", body); // 
             //! local function
             //console.log('res', res)
 
@@ -92,17 +81,11 @@ function testOption(options) {
 }
 
 
-
-
-
 // 다수의 isbn데이터를 상품조회 api쿼리에 요청하기 위한 함수
 function handleIsbn(aladin) {
-
-
+    // console.log(aladin);
     for (let i = 0; i < aladin.length; i++) {
         let aladinData = aladin[i];
-
-
 
         isbnData = {
             isbn: aladinData.isbn,
@@ -124,17 +107,13 @@ function handleIsbn(aladin) {
             }
         }
         lookUpApi(options2)
-
-
     }
 }
 // 기억해둘 것 !!
 // 검색결과는 알라딘 중고팔기 검색결과이다 검색결과에 따라 검색 갯수에 차이 존재
 
 
-
-function lookUpApi(lookUpQuery) {
-
+const lookUpApi = (lookUpQuery) => {
 
     request(lookUpQuery, function (err, res, body) {
         //  console.log("여기는", lookUpQuery)
@@ -188,7 +167,6 @@ function lookUpApi(lookUpQuery) {
             //var를 선언하여 다음 for문에서 사용할 수 있게 한다
 
             //console.log("지금 배열 길이는?", newArr.length)
-
         }
 
 
@@ -249,11 +227,7 @@ function lookUpApi(lookUpQuery) {
         let objtoJsonStr = handleApi.map(x => JSON.stringify(x));
         let declaredSet = new Set(objtoJsonStr);
         let delReduplicateBySet = [...declaredSet].map(y => JSON.parse(y));
-        // console.log("냐하하", delReduplicateBySet)
 
-
-
-        // console.log("변환", handleApi);
 
 
         // for (let key in listApiData) {
@@ -263,30 +237,34 @@ function lookUpApi(lookUpQuery) {
 
 
         // 파일명 모듈
-        const fileName = file.fileNameLive();
-
+        //const fileName = file.fileNameLive();
 
 
         // 기존 경로에서 handleData폴더로 이동시 절대경로는 되고 상대경로 적용 안된 것 해결 (부모폴더 아닌 동등한 폴더로 바로 폴더명/이름 해결)
         // 참고 링크 https://okky.kr/article/756784
 
         //  api 데이터를 json파일로 저장한다
-
         fs.writeFile(`Docs/aladinApi.json`,
             JSON.stringify(delReduplicateBySet, null, 2), 'utf-8',
             err =>
-                err ? console.error('파일 생성에 실패했습니다', err)
-                    : console.log('파일 생성에 성공했습니다!')
+                err ? console.error('알라딘 파일 생성에 실패했습니다', err)
+                    : console.log('알라딘 파일 생성에 성공했습니다!')
         );
 
-        // 파일 생성된 내용 보여주는 콘솔
-        //    let  writefileContents = JSON.parse(JSON.stringify(listApiData));
 
-        //     console.log(writefileContents);
-    })
+
+        // //파일 생성된 내용 보여주는 콘솔
+        // let writefileContents = JSON.parse(JSON.stringify(delReduplicateBySet));
+        // //let writefileContents = JSON.parse(delReduplicateBySet);
+        // return writefileContents;
+    });
+
+
+
 
 }
 
+
 module.exports = {
-    getQueryFromClient
+    getQueryFromClientToAladin
 }
